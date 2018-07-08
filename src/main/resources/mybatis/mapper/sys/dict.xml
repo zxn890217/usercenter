@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.usercenter.sys.dao.DictDao">
+    <resultMap type="com.example.usercenter.sys.entity.Dict" id="DictMap">
+        <id property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="code" column="code"/>
+        <result property="text" column="text"/>
+        <result property="value" column="value"/>
+        <result property="downLoad" column="down_load"/>
+    </resultMap>
+
+    <sql id="select-fields">
+    id,type,code,text,value,down_load
+    </sql>
+
+    <select id="get" parameterType="long" resultMap="DictMap">
+        SELECT * FROM dict WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.example.usercenter.sys.entity.Dict" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO dict(type,code,text,value,down_load)
+        VALUES(#{type},#{code},#{text},#{value},#{downLoad})
+    </insert>
+
+    <update id="update" parameterType="com.example.usercenter.sys.entity.Dict">
+        UPDATE dict
+        <set>
+            
+            type = #{type},
+            code = #{code},
+            text = #{text},
+            value = #{value},
+            down_load = #{downLoad},
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="sensitiveUpdate" parameterType="com.example.usercenter.sys.entity.Dict">
+        UPDATE dict
+        <set>
+            
+            <if test="type != null">type = #{type},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="text != null">text = #{text},</if>
+            <if test="value != null">value = #{value},</if>
+            <if test="downLoad != null">down_load = #{downLoad},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="com.example.usercenter.sys.entity.Dict">
+        DELETE FROM dict
+        WHERE id = #{id}
+    </delete>
+
+    <select id="exists" parameterType="com.example.usercenter.sys.entity.Dict" resultType="int">
+        select count(*) from dict
+        <where>
+            <if test="id != null">id = #{id},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="text != null">text = #{text},</if>
+            <if test="value != null">value = #{value},</if>
+            <if test="downLoad != null">down_load = #{downLoad},</if>
+        </where>
+    </select>
+
+    <sql id="select-conditions">
+        <if test="id != null">AND id = #{id}</if>
+        <if test="type != null">AND type = #{type}</if>
+        <if test="code != null">AND code = #{code}</if>
+        <if test="text != null">AND text = #{text}</if>
+        <if test="value != null">AND value = #{value}</if>
+        <if test="downLoad != null">AND down_load = #{downLoad}</if>
+    </sql>
+
+    <select id="count" parameterType="java.util.Map" resultType="int">
+        SELECT count(*) FROM dict
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+    </select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="DictMap">
+        SELECT <include refid="select-fields"/> FROM dict
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+        <if test="sort!= null">
+            order by ${sort} ${order}
+        </if>
+        <if test="limit>0">
+            limit #{offset},#{limit}
+        </if>
+    </select>
+</mapper>
