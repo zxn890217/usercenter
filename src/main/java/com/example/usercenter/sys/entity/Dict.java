@@ -1,7 +1,7 @@
 package com.example.usercenter.sys.entity;
 public class Dict {
     //ID
-    private Integer id;
+    private Long id;
     //类型
     private String type;
     //编码
@@ -13,11 +13,11 @@ public class Dict {
     //可下载（1：可以；2：不可以）
     private String downLoad;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

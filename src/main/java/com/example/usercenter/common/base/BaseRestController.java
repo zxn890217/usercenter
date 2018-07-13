@@ -1,12 +1,9 @@
 package com.example.usercenter.common.base;
 
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by zxn on 2017/10/23.
@@ -22,6 +19,7 @@ public abstract class BaseRestController<T, PK extends Serializable> {
             return new RespBody(true,"获取成功", result);
         return new RespBody(false,"获取失败");
     }
+
     @PostMapping(value="")
     @ResponseBody
     public RespBody save(@RequestBody T entity){
@@ -34,9 +32,10 @@ public abstract class BaseRestController<T, PK extends Serializable> {
         }
         return new RespBody(false, "保存失败");
     }
-    @PutMapping(value="/{id}")
+
+    @PutMapping(value="")
     @ResponseBody
-    public RespBody update(@PathVariable("id") PK id, @RequestBody T entity){
+    public RespBody update(@RequestBody T entity){
         try{
             if(getService().update(entity))
                 return new RespBody(true, "修改成功");
@@ -46,6 +45,7 @@ public abstract class BaseRestController<T, PK extends Serializable> {
         }
         return new RespBody(false, "修改失败");
     }
+
     @DeleteMapping(value="/{id}")
     @ResponseBody
     public RespBody delete(@PathVariable("id") PK id){
@@ -58,6 +58,7 @@ public abstract class BaseRestController<T, PK extends Serializable> {
         }
         return new RespBody(false, "删除失败");
     }
+
     @PostMapping(value="/page")
     @ResponseBody
     public RespBody page(@RequestBody JSONObject params){
