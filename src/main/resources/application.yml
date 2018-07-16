@@ -36,3 +36,11 @@ mybatis:
   mapperLocations: classpath:mybatis/mapper/**/*.xml
 
 debug: true
+
+logging:
+  level:
+    com:
+      example:
+        usercenter:
+          sys:
+            dao: debug
