@@ -17,6 +17,7 @@ import java.util.List;
 @Service
 public class DictService extends BaseService<Dict, Long> {
     @Autowired
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     private DictDao dictDao;
 
     protected BaseDao<Dict, Long> getDao(){

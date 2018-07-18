@@ -1,6 +1,7 @@
 package com.example.usercenter.common.base;
 
 import com.google.common.base.CaseFormat;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,18 +20,22 @@ public abstract class BaseService<T, PK extends Serializable> {
         return getDao().get(id);
     }
 
+    @Transactional
     public boolean insert(T entity){
         return getDao().insert(entity)>0;
     }
 
+    @Transactional
     public boolean update(T entity){
         return getDao().update(entity)>0;
     }
 
+    @Transactional
     public boolean sensitiveUpdate(T entity){
         return getDao().sensitiveUpdate(entity)>0;
     }
 
+    @Transactional
     public boolean delete(PK id){
         return getDao().delete(id)>0;
     }

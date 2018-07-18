@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.usercenter.sys.dao.AuthorityDao">
+    <resultMap type="com.example.usercenter.sys.entity.Authority" id="AuthorityMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="path" column="path"/>
+        <association property="parent" javaType="com.example.usercenter.sys.entity.Authority">
+            <id property="id" column="p_id"/>
+            <result property="name" column="p_name"/>
+            <result property="code" column="p_code"/>
+            <result property="path" column="p_path"/>
+        </association>
+    </resultMap>
+
+    <sql id="select-fields">
+    id,name,code,parent_id
+    </sql>
+
+    <select id="get" parameterType="Long" resultMap="AuthorityMap">
+        SELECT a.*, p.id p_id, p.name p_name, p.code p_code, p.path p_path FROM authority a
+        LEFT JOIN authority p on a.parent_id = p.id
+        WHERE a.id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.example.usercenter.sys.entity.Authority" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO authority(name,code,path,parent_id)
+        VALUES(#{name},#{code},#{path},
+        <choose>
+            <when test="parent != null">#{parent.id}</when>
+            <otherwise>0</otherwise>
+        </choose>
+        )
+    </insert>
+
+    <update id="update" parameterType="com.example.usercenter.sys.entity.Authority">
+        UPDATE authority
+        <set>
+            name = #{name},
+            code = #{code},
+            path = #{path},
+            <choose>
+                <when test="parent != null">parent_id = #{parent.id}</when>
+                <otherwise>parent_id = 0</otherwise>
+            </choose>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="sensitiveUpdate" parameterType="com.example.usercenter.sys.entity.Authority">
+        UPDATE authority
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="path != null">path = #{path},</if>
+            <if test="parent != null">parent_id = #{parent.id},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateChildrenPathById">
+        UPDATE authority SET path = REPLACE(path, #{oldPath}, #{newPath}) where parent_id = #{id}
+    </update>
+
+    <update id="updateChildrenPathByPath">
+        UPDATE authority SET path = REPLACE(path, #{oldPath}, #{newPath}) where path like CONCAT(#{oldPath},#{id},'/%')
+    </update>
+
+    <update id="updateChildrenToRoot" parameterType="com.example.usercenter.sys.entity.Authority">
+        UPDATE authority SET parent_id = 0, path = REPLACE(path, CONCAT(#{path},#{id},'/'), '/') where path like CONCAT(#{path},#{id},'/%')
+    </update>
+
+    <delete id="delete" parameterType="com.example.usercenter.sys.entity.Authority">
+        DELETE FROM authority
+        WHERE id = #{id}
+    </delete>
+
+    <select id="exists" parameterType="com.example.usercenter.sys.entity.Authority" resultType="int">
+        select count(*) from authority
+        <where>
+            <if test="id != null">id = #{id},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+        </where>
+    </select>
+
+    <sql id="select-conditions">
+        <if test="id != null">AND a.id = #{id}</if>
+        <if test="name != null">AND a.name = #{name}</if>
+        <if test="code != null">AND a.code = #{code}</if>
+        <if test="path != null">AND a.path like CONCAT('%/',#{path},'/%')</if>
+        <if test="unpath != null">AND a.path not like CONCAT('%/',#{unpath},'/%')</if>
+        <if test="parentId != null">AND a.parent_id = #{parentId}</if>
+    </sql>
+
+    <select id="count" parameterType="java.util.Map" resultType="int">
+        SELECT count(*) FROM authority a
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+    </select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="AuthorityMap">
+        SELECT a.*, p.id p_id, p.name p_name, p.code p_code FROM authority a
+        LEFT JOIN authority p on a.parent_id = p.id
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+        <if test="sort != null">
+            order by a.${sort} ${order}
+        </if>
+        <if test="limit > 0">
+            limit #{offset},#{limit}
+        </if>
+    </select>
+</mapper>
