@@ -6,8 +6,8 @@
         <result property="name" column="name"/>
         <result property="code" column="code"/>
         <result property="path" column="path"/>
-        <association property="parent" javaType="com.example.usercenter.sys.entity.Authority">
-            <id property="id" column="p_id"/>
+        <association property="parent" javaType="com.example.usercenter.sys.entity.Authority" column="parent_id">
+            <id property="id" column="parent_id"/>
             <result property="name" column="p_name"/>
             <result property="code" column="p_code"/>
             <result property="path" column="p_path"/>
@@ -28,7 +28,7 @@
         INSERT INTO authority(name,code,path,parent_id)
         VALUES(#{name},#{code},#{path},
         <choose>
-            <when test="parent != null">#{parent.id}</when>
+            <when test="parent != null and parent.id != null">#{parent.id}</when>
             <otherwise>0</otherwise>
         </choose>
         )
@@ -60,15 +60,15 @@
     </update>
 
     <update id="updateChildrenPathById">
-        UPDATE authority SET path = REPLACE(path, #{oldPath}, #{newPath}) where parent_id = #{id}
+        UPDATE authority SET path = CONCAT(#{newPath}, SUBSTRING(path, LENGTH(#{oldPath})+1)) WHERE parent_id = #{id}
     </update>
 
     <update id="updateChildrenPathByPath">
-        UPDATE authority SET path = REPLACE(path, #{oldPath}, #{newPath}) where path like CONCAT(#{oldPath},#{id},'/%')
+        UPDATE authority SET path = CONCAT(#{newPath}, SUBSTRING(path, LENGTH(#{oldPath})+1)) where path like CONCAT(#{oldPath},#{id},'/%')
     </update>
 
     <update id="updateChildrenToRoot" parameterType="com.example.usercenter.sys.entity.Authority">
-        UPDATE authority SET parent_id = 0, path = REPLACE(path, CONCAT(#{path},#{id},'/'), '/') where path like CONCAT(#{path},#{id},'/%')
+        UPDATE authority SET parent_id = 0, path = SUBSTRING(path, LENGTH(CONCAT(#{path},#{id},'/'))) where path like CONCAT(#{path},#{id},'/%')
     </update>
 
     <delete id="delete" parameterType="com.example.usercenter.sys.entity.Authority">
