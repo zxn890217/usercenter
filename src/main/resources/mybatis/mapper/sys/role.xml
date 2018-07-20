@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.usercenter.sys.dao.RoleDao">
+    <resultMap type="com.example.usercenter.sys.entity.Role" id="RoleMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="creatorId" column="creator_id"/>
+        <result property="createTime" column="create_time"/>
+        <collection property="authorities" javaType="java.util.ArrayList" ofType="com.example.usercenter.sys.entity.Authority">
+            <id property="id" column="authority_id"/>
+            <result property="name" column="authority_name"/>
+            <result property="code" column="authority_code"/>
+        </collection>
+    </resultMap>
+
+    <sql id="select-fields">
+    id,name,creator_id,create_time
+    </sql>
+
+    <select id="get" parameterType="Long" resultMap="RoleMap">
+        SELECT r.*,ra.authority_id,a.name authority_name,a.code authority_code FROM role r
+        LEFT JOIN role_authority ra ON r.id=ra.role_id
+        LEFT JOIN authority a ON a.id=ra.authority_id
+        WHERE r.id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.example.usercenter.sys.entity.Role" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO role(name,creator_id,create_time)
+        VALUES(#{name},#{creatorId},#{createTime})
+    </insert>
+
+    <update id="update" parameterType="com.example.usercenter.sys.entity.Role">
+        UPDATE role
+        <set>
+            name = #{name},
+            creator_id = #{creatorId},
+            create_time = #{createTime},
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="sensitiveUpdate" parameterType="com.example.usercenter.sys.entity.Role">
+        UPDATE role
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="creatorId != null">creator_id = #{creatorId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <insert id="insertRoleAuthority" parameterType="com.example.usercenter.sys.entity.Role">
+        INSERT INTO role_authority(role_id, authority_id)
+        VALUES
+        <foreach collection="authorities" item="authority" separator=",">
+            (#{id}, #{authority.id})
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="com.example.usercenter.sys.entity.Role">
+        DELETE FROM role
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteRoleAuthority" parameterType="com.example.usercenter.sys.entity.Role">
+        DELETE FROM role_authority where role_id = #{id}
+    </delete>
+
+    <select id="exists" parameterType="com.example.usercenter.sys.entity.Role" resultType="int">
+        select count(*) from role
+        <where>
+            <if test="id != null">id = #{id},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="creatorId != null">creator_id = #{creatorId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </where>
+    </select>
+
+    <sql id="select-conditions">
+        <if test="id != null">AND r.id = #{id}</if>
+        <if test="name != null">AND r.name LIKE CONCAT('%',#{name},'%')</if>
+        <if test="creatorId != null">AND r.creator_id = #{creatorId}</if>
+        <if test="createTime != null">AND r.create_time = #{createTime}</if>
+    </sql>
+
+    <select id="count" parameterType="java.util.Map" resultType="int">
+        SELECT count(*) FROM role r
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+    </select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="RoleMap">
+        SELECT r.*,ra.authority_id,a.name authority_name,a.code authority_code FROM role r
+        LEFT JOIN role_authority ra ON r.id=ra.role_id
+        LEFT JOIN authority a ON a.id=ra.authority_id
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+        <if test="sort != null">
+            order by r.${sort} ${order}
+        </if>
+        <if test="limit > 0">
+            limit #{offset},#{limit}
+        </if>
+    </select>
+</mapper>

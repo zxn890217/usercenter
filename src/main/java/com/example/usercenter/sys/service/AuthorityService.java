@@ -34,7 +34,7 @@ public class AuthorityService extends BaseService<Authority, Long> {
 
     @Override
     public boolean update(Authority entity) {
-        Authority old = authorityDao.get(entity.getId());
+        /*Authority old = authorityDao.get(entity.getId());
         String oldPath = old.getPath();
         if(entity.getParent()!=null){
             Authority parent = authorityDao.get(entity.getParent().getId());
@@ -48,13 +48,13 @@ public class AuthorityService extends BaseService<Authority, Long> {
         String newPath = entity.getPath();
         if(!oldPath.equals(newPath)){
             authorityDao.updateChildrenPathByPath(entity.getId(), oldPath, newPath);
-        }
+        }*/
         return super.update(entity);
     }
 
     @Override
     public boolean sensitiveUpdate(Authority entity) {
-        if(entity.getParent()!=null){
+        /*if(entity.getParent()!=null){
             Authority old = authorityDao.get(entity.getId());
             String oldPath = old.getPath();
             if(entity.getParent()!=null){
@@ -70,14 +70,14 @@ public class AuthorityService extends BaseService<Authority, Long> {
             if(!oldPath.equals(newPath)){
                 authorityDao.updateChildrenPathByPath(entity.getId(), oldPath, newPath);
             }
-        }
+        }*/
         return super.sensitiveUpdate(entity);
     }
 
     @Override
     public boolean delete(Long id) {
-        Authority entity = authorityDao.get(id);
-        authorityDao.updateChildrenToRoot(entity);
+        /*Authority entity = authorityDao.get(id);
+        authorityDao.updateChildrenToRoot(entity);*/
         return super.delete(id);
     }
 }

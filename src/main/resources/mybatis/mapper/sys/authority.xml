@@ -5,6 +5,7 @@
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="code" column="code"/>
+        <!--
         <result property="path" column="path"/>
         <association property="parent" javaType="com.example.usercenter.sys.entity.Authority" column="parent_id">
             <id property="id" column="parent_id"/>
@@ -12,19 +13,23 @@
             <result property="code" column="p_code"/>
             <result property="path" column="p_path"/>
         </association>
+        -->
     </resultMap>
 
     <sql id="select-fields">
-    id,name,code,parent_id
+    id,name,code<!--path,,parent_id-->
     </sql>
 
     <select id="get" parameterType="Long" resultMap="AuthorityMap">
-        SELECT a.*, p.id p_id, p.name p_name, p.code p_code, p.path p_path FROM authority a
+        <!--SELECT a.*, p.id p_id, p.name p_name, p.code p_code, p.path p_path FROM authority a
         LEFT JOIN authority p on a.parent_id = p.id
         WHERE a.id = #{id}
+        -->
+        SELECT * FROM authority WHERE id = #{id}
     </select>
 
     <insert id="insert" parameterType="com.example.usercenter.sys.entity.Authority" useGeneratedKeys="true" keyProperty="id">
+        <!--
         INSERT INTO authority(name,code,path,parent_id)
         VALUES(#{name},#{code},#{path},
         <choose>
@@ -32,6 +37,9 @@
             <otherwise>0</otherwise>
         </choose>
         )
+        -->
+        INSERT INTO authority(name,code)
+        VALUES(#{name},#{code})
     </insert>
 
     <update id="update" parameterType="com.example.usercenter.sys.entity.Authority">
@@ -39,11 +47,13 @@
         <set>
             name = #{name},
             code = #{code},
+            <!--
             path = #{path},
             <choose>
                 <when test="parent != null">parent_id = #{parent.id}</when>
                 <otherwise>parent_id = 0</otherwise>
             </choose>
+            -->
         </set>
         WHERE id = #{id}
     </update>
@@ -53,12 +63,14 @@
         <set>
             <if test="name != null">name = #{name},</if>
             <if test="code != null">code = #{code},</if>
+            <!--
             <if test="path != null">path = #{path},</if>
             <if test="parent != null">parent_id = #{parent.id},</if>
+            -->
         </set>
         WHERE id = #{id}
     </update>
-
+    <!--
     <update id="updateChildrenPathById">
         UPDATE authority SET path = CONCAT(#{newPath}, SUBSTRING(path, LENGTH(#{oldPath})+1)) WHERE parent_id = #{id}
     </update>
@@ -70,7 +82,7 @@
     <update id="updateChildrenToRoot" parameterType="com.example.usercenter.sys.entity.Authority">
         UPDATE authority SET parent_id = 0, path = SUBSTRING(path, LENGTH(CONCAT(#{path},#{id},'/'))) where path like CONCAT(#{path},#{id},'/%')
     </update>
-
+    -->
     <delete id="delete" parameterType="com.example.usercenter.sys.entity.Authority">
         DELETE FROM authority
         WHERE id = #{id}
@@ -82,7 +94,9 @@
             <if test="id != null">id = #{id},</if>
             <if test="name != null">name = #{name},</if>
             <if test="code != null">code = #{code},</if>
+            <!--
             <if test="parentId != null">parent_id = #{parentId},</if>
+            -->
         </where>
     </select>
 
@@ -90,9 +104,11 @@
         <if test="id != null">AND a.id = #{id}</if>
         <if test="name != null">AND a.name = #{name}</if>
         <if test="code != null">AND a.code = #{code}</if>
+        <!--
         <if test="path != null">AND a.path like CONCAT('%/',#{path},'/%')</if>
         <if test="unpath != null">AND a.path not like CONCAT('%/',#{unpath},'/%')</if>
         <if test="parentId != null">AND a.parent_id = #{parentId}</if>
+        -->
     </sql>
 
     <select id="count" parameterType="java.util.Map" resultType="int">
@@ -103,8 +119,20 @@
     </select>
 
     <select id="query" parameterType="java.util.Map" resultMap="AuthorityMap">
+        <!--
         SELECT a.*, p.id p_id, p.name p_name, p.code p_code FROM authority a
         LEFT JOIN authority p on a.parent_id = p.id
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+        <if test="sort != null">
+            order by a.${sort} ${order}
+        </if>
+        <if test="limit > 0">
+            limit #{offset},#{limit}
+        </if>
+        -->
+        select * from authority a
         <where>
             <include refid="select-conditions"/>
         </where>
