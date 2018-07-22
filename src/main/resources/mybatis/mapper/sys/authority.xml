@@ -83,9 +83,13 @@
         UPDATE authority SET parent_id = 0, path = SUBSTRING(path, LENGTH(CONCAT(#{path},#{id},'/'))) where path like CONCAT(#{path},#{id},'/%')
     </update>
     -->
-    <delete id="delete" parameterType="com.example.usercenter.sys.entity.Authority">
+    <delete id="delete" parameterType="long">
         DELETE FROM authority
         WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteRoleAuthority" parameterType="long">
+        delete FROM role_authority where authority_id=#{id}
     </delete>
 
     <select id="exists" parameterType="com.example.usercenter.sys.entity.Authority" resultType="int">
@@ -102,8 +106,8 @@
 
     <sql id="select-conditions">
         <if test="id != null">AND a.id = #{id}</if>
-        <if test="name != null">AND a.name = #{name}</if>
-        <if test="code != null">AND a.code = #{code}</if>
+        <if test="name != null and name != ''">AND a.name LIKE CONCAT('%',#{name},'%')</if>
+        <if test="code != null and code != ''">AND a.code = #{code}</if>
         <!--
         <if test="path != null">AND a.path like CONCAT('%/',#{path},'/%')</if>
         <if test="unpath != null">AND a.path not like CONCAT('%/',#{unpath},'/%')</if>

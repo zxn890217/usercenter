@@ -49,7 +49,7 @@
         WHERE id = #{id}
     </update>
 
-    <delete id="delete" parameterType="com.example.usercenter.sys.entity.Dict">
+    <delete id="delete" parameterType="long">
         DELETE FROM dict
         WHERE id = #{id}
     </delete>
@@ -68,11 +68,11 @@
 
     <sql id="select-conditions">
         <if test="id != null">AND id = #{id}</if>
-        <if test="type != null">AND type = #{type}</if>
-        <if test="code != null">AND code = #{code}</if>
-        <if test="text != null">AND text = #{text}</if>
-        <if test="value != null">AND value = #{value}</if>
-        <if test="downLoad != null">AND down_load = #{downLoad}</if>
+        <if test="type != null and type != ''">AND type = #{type}</if>
+        <if test="code != null and code != ''">AND code = #{code}</if>
+        <if test="text != null and text != ''">AND text = #{text}</if>
+        <if test="value != null and value != ''">AND value = #{value}</if>
+        <if test="downLoad != null and downLoad != ''">AND down_load = #{downLoad}</if>
     </sql>
 
     <select id="count" parameterType="java.util.Map" resultType="int">

@@ -34,7 +34,7 @@ public class RoleService extends BaseService<Role, Long> {
 
     @Override
     public boolean update(Role entity) {
-        roleDao.deleteRoleAuthority(entity);
+        roleDao.deleteRoleAuthority(entity.getId());
         if(roleDao.update(entity)>0){
             if(entity.getAuthorities()!=null && entity.getAuthorities().size()>0)
                 roleDao.insertRoleAuthority(entity);
@@ -50,9 +50,7 @@ public class RoleService extends BaseService<Role, Long> {
 
     @Override
     public boolean delete(Long id) {
-        Role entity = new Role();
-        entity.setId(id);
-        roleDao.deleteRoleAuthority(entity);
+        roleDao.deleteRoleAuthority(id);
         return super.delete(id);
     }
 }

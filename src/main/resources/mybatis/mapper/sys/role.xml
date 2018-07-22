@@ -57,12 +57,12 @@
         </foreach>
     </insert>
 
-    <delete id="delete" parameterType="com.example.usercenter.sys.entity.Role">
+    <delete id="delete" parameterType="long">
         DELETE FROM role
         WHERE id = #{id}
     </delete>
 
-    <delete id="deleteRoleAuthority" parameterType="com.example.usercenter.sys.entity.Role">
+    <delete id="deleteRoleAuthority" parameterType="long">
         DELETE FROM role_authority where role_id = #{id}
     </delete>
 
@@ -78,9 +78,9 @@
 
     <sql id="select-conditions">
         <if test="id != null">AND r.id = #{id}</if>
-        <if test="name != null">AND r.name LIKE CONCAT('%',#{name},'%')</if>
+        <if test="name != null and name != ''">AND r.name LIKE CONCAT('%',#{name},'%')</if>
         <if test="creatorId != null">AND r.creator_id = #{creatorId}</if>
-        <if test="createTime != null">AND r.create_time = #{createTime}</if>
+        <if test="createTime != null and createTime != ''">AND r.create_time = #{createTime}</if>
     </sql>
 
     <select id="count" parameterType="java.util.Map" resultType="int">
