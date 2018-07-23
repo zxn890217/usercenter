@@ -6,9 +6,9 @@ import org.apache.ibatis.annotations.Param;
 
 public interface AuthorityDao extends BaseDao<Authority, Long> {
 
-    /*public int updateChildrenPathById(@Param("id") long id, @Param("oldPath") String oldPath, @Param("newPath") String newPath);
+    public int insertAuthorityUserGroup(Authority entity);
 
-    public int updateChildrenPathByPath(@Param("id") long id, @Param("oldPath") String oldPath, @Param("newPath") String newPath);
+    public int deleteAuthorityUserGroup(long id);
 
-    public int updateChildrenToRoot(Authority entity);*/
+    public int deleteRoleAuthority(long id);
 }

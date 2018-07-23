@@ -29,7 +29,12 @@ public class UserGroupService extends BaseService<UserGroup, Long> {
         if(entity.getPath() == null){
             entity.setPath("/");
         }
-        return super.insert(entity);
+        if(userGroupDao.insert(entity)>0){
+            if(entity.getAuthorities()!=null && entity.getAuthorities().size()>0)
+                userGroupDao.insertAuthorityUserGroup(entity);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -49,7 +54,13 @@ public class UserGroupService extends BaseService<UserGroup, Long> {
         if(!oldPath.equals(newPath)){
             userGroupDao.updateChildrenPathByPath(entity.getId(), oldPath, newPath);
         }
-        return super.update(entity);
+        if(userGroupDao.update(entity)>0){
+            userGroupDao.deleteAuthorityUserGroup(entity.getId());
+            if(entity.getAuthorities()!=null && entity.getAuthorities().size()>0)
+                userGroupDao.insertAuthorityUserGroup(entity);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -71,13 +82,23 @@ public class UserGroupService extends BaseService<UserGroup, Long> {
                 userGroupDao.updateChildrenPathByPath(entity.getId(), oldPath, newPath);
             }
         }
-        return super.sensitiveUpdate(entity);
+        if(userGroupDao.sensitiveUpdate(entity)>0){
+            userGroupDao.deleteAuthorityUserGroup(entity.getId());
+            if(entity.getAuthorities()!=null && entity.getAuthorities().size()>0)
+                userGroupDao.insertAuthorityUserGroup(entity);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean delete(Long id) {
-        UserGroup entity = userGroupDao.get(id);
-        userGroupDao.updateChildrenToRoot(entity);
-        return super.delete(id);
+        if(userGroupDao.delete(id)>0){
+            userGroupDao.deleteAuthorityUserGroup(id);
+            UserGroup entity = userGroupDao.get(id);
+            userGroupDao.updateChildrenToRoot(entity);
+            return true;
+        }
+        return false;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.usercenter.sys.entity;
 
+import java.util.List;
+
 public class Authority {
     //权限ID
     private Long id;
@@ -7,10 +9,8 @@ public class Authority {
     private String name;
     //代码
     private String code;
-    //父级
-    private Authority parent;
-    //路径
-    private String path;
+    //用户组
+    private List<UserGroup> groups;
 
     public Long getId(){
         return id;
@@ -36,19 +36,11 @@ public class Authority {
         this.code = code;
     }
 
-    public Authority getParent() {
-        return parent;
+    public List<UserGroup> getGroups() {
+        return groups;
     }
 
-    public void setParent(Authority parent) {
-        this.parent = parent;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
+    public void setGroups(List<UserGroup> groups) {
+        this.groups = groups;
     }
 }
