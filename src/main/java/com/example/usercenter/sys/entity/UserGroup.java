@@ -11,6 +11,12 @@ public class UserGroup {
     private UserGroup parent;
     //路径
     private String path;
+    //自动授权（1：是；0：否）
+    private String autoAuth;
+    //同级授权（1：是；0：否）
+    private String peerAuth;
+    //下级授权（1：是；0：否）
+    private String childAuth;
     //权限列表
     private List<Authority> authorities;
 
@@ -44,6 +50,30 @@ public class UserGroup {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getAutoAuth() {
+        return autoAuth;
+    }
+
+    public void setAutoAuth(String autoAuth) {
+        this.autoAuth = autoAuth;
+    }
+
+    public String getPeerAuth() {
+        return peerAuth;
+    }
+
+    public void setPeerAuth(String peerAuth) {
+        this.peerAuth = peerAuth;
+    }
+
+    public String getChildAuth() {
+        return childAuth;
+    }
+
+    public void setChildAuth(String childAuth) {
+        this.childAuth = childAuth;
     }
 
     public List<Authority> getAuthorities() {

@@ -1,6 +1,7 @@
 package com.example.usercenter.common.base;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
@@ -27,6 +28,11 @@ public abstract class BaseRestController<T, PK extends Serializable> {
             if(getService().insert(entity))
                 return new RespBody(true, "保存成功");
         }
+        catch (DuplicateKeyException ve){
+            ve.printStackTrace();
+            String message = ve.getCause().getMessage();
+            return new RespBody(false, "保存失败："+message);
+        }
         catch (Exception e){
             e.printStackTrace();
         }
@@ -39,6 +45,11 @@ public abstract class BaseRestController<T, PK extends Serializable> {
         try{
             if(getService().update(entity))
                 return new RespBody(true, "修改成功");
+        }
+        catch (DuplicateKeyException ve){
+            ve.printStackTrace();
+            String message = ve.getCause().getMessage();
+            return new RespBody(false, "修改失败："+message);
         }
         catch (Exception e){
             e.printStackTrace();
